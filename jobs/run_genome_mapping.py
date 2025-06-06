@@ -42,7 +42,6 @@ def main():
         run_info_append(f_run_info, "ALIGNFMT={}".format(args.align_fmt))
         run_info_append(f_run_info, "FILETYPE={}".format(filetype))
         run_info_append(f_run_info, "REFVER={}".format(args.reference))
-        run_info_append(f_run_info, "UPLOAD={}".format(args.upload))
         run_info_append(f_run_info, "SKIP_CNVNATOR={}".format(args.skip_cnvnator))
         run_info_append(f_run_info, "RUN_MUTECT_SINGLE={}".format(args.run_mutect_single))
         run_info_append(f_run_info, "RUN_FILTERS={}".format(args.run_filters))
@@ -131,10 +130,6 @@ def parse_args():
     parser.add_argument('--con-down-limit', metavar='int', type=int,
         help='''The maximum allowded number of concurrent downloads
         [ Default: 6 ]''', default=6)
-    parser.add_argument('--upload', metavar='syn123', 
-        help='''Synapse ID of project or folder where to upload result cram files. 
-        If it is not set, the result cram files will be locally saved.
-        [ Default: None ]''', default=None)
     parser.add_argument('-q', '--queue', metavar='queue', required=True,
         help='''Specify the queue name of Sun Grid Engine for jobs to be submitted''')
     parser.add_argument('-n', '--conda-env', metavar='env',
@@ -155,8 +150,7 @@ def parse_args():
         Lines staring with "#" will omitted.
         Header line should also start with "#".
         Trailing columns will be ignored.
-        "location" is Synapse ID, S3Uri of the NDA or a user, or LocalPath.
-        For data download, synapse or aws clients, or symbolic link will be used, respectively.''')
+        "location" is LocalPath.''')
     return parser.parse_args()
 
 if __name__ == "__main__":

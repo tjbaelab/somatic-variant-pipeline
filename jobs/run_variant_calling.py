@@ -43,7 +43,6 @@ def main():
         run_info_append(f_run_info, "REFVER={}".format(args.reference))
         run_info_append(f_run_info, "RUN_FILTERS={}".format(args.run_filters))
         run_info_append(f_run_info, "MULTI_ALIGNS={}".format(len(sdata) > 1))
-        run_info_append(f_run_info, "UPLOAD={}".format(args.upload))
         run_info_append(f_run_info, "SKIP_CNVNATOR={}".format(args.skip_cnvnator))
         run_info_append(f_run_info, "RUN_MUTECT_SINGLE={}".format(args.run_mutect_single))
         if args.run_gatk_hc:
@@ -80,10 +79,6 @@ def main():
         jid = q.submit(opt(sample, args.queue),
             "{job_home}/pre_3.run_variant_calling.sh {sample}".format(
                 job_home=job_home, sample=sample))
-        #if args.upload is not None:
-        #    q.submit(opt(sample, args.queue, jid),
-        #        "{job_home}/pre_4.upload_cram.sh {sample}".format(
-        #            job_home=job_home, sample=sample))
 
         print()
 
@@ -98,10 +93,6 @@ def parse_args():
     parser.add_argument('--con-down-limit', metavar='int', type=int,
         help='''The maximum allowded number of concurrent downloads
         [ Default: 6 ]''', default=6)
-    parser.add_argument('--upload', metavar='syn123', 
-        help='''Synapse ID of project or folder where to upload result cram files. 
-        If it is not set, the result cram files will be locally saved.
-        [ Default: None ]''', default=None)
     parser.add_argument('-q', '--queue', metavar='queue', required=True,
         help='''Specify the queue name of Sun Grid Engine for jobs to be submitted''')
     parser.add_argument('-n', '--conda-env', metavar='env',
@@ -122,8 +113,7 @@ def parse_args():
         Lines staring with "#" will omitted.
         Header line should also start with "#".
         Trailing columns will be ignored.
-        "location" is Synapse ID, S3Uri of the NDA or a user, or LocalPath.
-        For data download, synapse or aws clients, or symbolic link will be used, respectively.''')
+        "location" is LocalPath.''')
     return parser.parse_args()
 
 if __name__ == "__main__":
