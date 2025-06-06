@@ -57,8 +57,6 @@ def main():
     #jid = q.submit(opt(args.sample_name, args.queue, aln_jid), 
     #    "{job_home}/post_2.run_variant_calling.sh {sample}".format(job_home=job_home, sample=args.sample_name))
 
-    #q.submit(opt(args.sample_name, args.queue, jid), 
-    #    "{job_home}/post_3.upload_cram.sh {sample}".format(job_home=job_home, sample=args.sample_name))
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Alignment job submitter')

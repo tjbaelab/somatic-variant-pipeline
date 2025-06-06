@@ -32,18 +32,10 @@ else
     n=0
     until [[ $n -eq 5 ]]; do
         printf "[$(date)] Download try $n starts.\n\n"
-        if [[ $LOC =~ ^syn[0-9]+ ]]; then
-            $SYNAPSE get $LOC --downloadLocation $SM/alignment/ && { rc=$?; break; } || rc=$?
-        elif [[ $LOC =~ ^s3:.+ ]]; then
-            $AWS s3 ls $LOC || {
-                printf "[$(date)] Set an NDA AWS token\n\n"
-                eval "$($PIPE_HOME/utils/nda_aws_token.sh -r ~/.nda_credential)"
-            }
-            $AWS s3 cp --no-progress $LOC $SM/alignment/ && { rc=$?; break; } || rc=$?
-        else
-            ls -lh $LOC && ln -sf $(readlink -f $LOC) $SM/alignment/$FNAME || rc=$?
-            break
-        fi
+        
+        ls -lh $LOC && ln -sf $(readlink -f $LOC) $SM/alignment/$FNAME || rc=$?
+        break
+        
         n=$((n+1))
         printf "[$(date)] Download try $n failed.\n\n"
     done
