@@ -104,8 +104,7 @@ class TestReadConfigDefault:
         config_b37 = read_config("b37", "bp")
         assert config_default["RESOURCES"]["ref"] == config_b37["RESOURCES"]["ref"]
 
-    def test_unknown_reference_falls_back_to_default(self, mock_conda):
-        """Unknown reference falls back to config.ini (symlink to b37)."""
-        config = read_config("unknown_ref", "bp")
-        assert "TOOLS" in config
-        assert "RESOURCES" in config
+    def test_unknown_reference_raises_error(self, mock_conda):
+        """Unknown reference raises FileNotFoundError."""
+        with pytest.raises(FileNotFoundError, match="Reference config not found"):
+            read_config("unknown_ref", "bp")
