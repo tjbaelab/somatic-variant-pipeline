@@ -80,3 +80,19 @@ class TestPrinter:
         monkeypatch.setattr("sys.stderr", io.StringIO())
         # Should not raise
         printer("test")
+
+    def test_broken_pipe_on_close(self, monkeypatch):
+        """printer handles BrokenPipeError when closing stdout/stderr too."""
+
+        class BrokenCloseable:
+            def close(self):
+                raise BrokenPipeError()
+
+        def raise_broken_pipe(*args, **kwargs):
+            raise BrokenPipeError()
+
+        monkeypatch.setattr("builtins.print", raise_broken_pipe)
+        monkeypatch.setattr("sys.stdout", BrokenCloseable())
+        monkeypatch.setattr("sys.stderr", BrokenCloseable())
+        # Should not raise even when close() also raises BrokenPipeError
+        printer("test")
