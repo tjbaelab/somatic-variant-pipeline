@@ -73,6 +73,30 @@ class TestReadConfigHg38:
         assert "hg38" in config["RESOURCES"]["dbsnp"]
 
 
+class TestReadConfigHg38Variants:
+    def test_hg38_decoy_reference(self, mock_conda):
+        config = read_config("hg38_decoy", "bp")
+        assert "GRCh38_full_analysis_set_plus_decoy_hla" in config["RESOURCES"]["ref"]
+
+    def test_hg38_v0_reference(self, mock_conda):
+        config = read_config("hg38_v0", "bp")
+        assert "Homo_sapiens_assembly38.fasta" in config["RESOURCES"]["ref"]
+
+    def test_hg38_no_alt_gnomad_version(self, mock_conda):
+        config = read_config("hg38_no_alt", "bp")
+        assert "r3.1.2" in config["RESOURCES"]["gnomad_snp"]
+
+    def test_hg38_decoy_gnomad_version(self, mock_conda):
+        config = read_config("hg38_decoy", "bp")
+        assert "r2.1.1" in config["RESOURCES"]["gnomad_snp"]
+
+    def test_all_hg38_variants_have_tools(self, mock_conda):
+        for ref in ["hg38_no_alt", "hg38_decoy", "hg38_v0"]:
+            config = read_config(ref, "bp")
+            assert "TOOLS" in config
+            assert "samtools" in config["TOOLS"]
+
+
 class TestReadConfigDefault:
     def test_default_is_b37(self, mock_conda):
         """read_config() with no reference arg defaults to b37."""

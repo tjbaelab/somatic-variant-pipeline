@@ -14,10 +14,19 @@ def read_config(reference = "b37", conda_env = "bp"):
         "env_dir": env_dir
     }
 
-    config.read(pipe_home + ("/config.hg19.ini" if reference == "hg19" else "/config.hg38.ini" if reference == "hg38" else "/config.ini"))
+    ref_map = {"hg19": "hg19", "hg38": "hg38_no_alt"}
+    ref_key = ref_map.get(reference, reference if reference != "b37" else "b37")
+
+    tools_ini = os.path.join(pipe_home, "config", "tools.ini")
+    ref_ini = os.path.join(pipe_home, "config", "references", ref_key + ".ini")
+
+    if os.path.exists(tools_ini) and os.path.exists(ref_ini):
+        config.read([tools_ini, ref_ini])
+    else:
+        config.read(pipe_home + ("/config.hg19.ini" if reference == "hg19" else "/config.hg38.ini" if reference == "hg38" else "/config.ini"))
+
     for section in ["TOOLS", "RESOURCES"]:
         for key in config[section]:
-            # config[section][key] = pipe_home + "/" + config[section][key]
             config[section][key] = config[section][key].format(ENVDIR=env_dir, PIPEHOME=pipe_home)
 
     return config
