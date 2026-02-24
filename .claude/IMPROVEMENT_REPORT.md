@@ -305,10 +305,9 @@ def read_config(reference="b37", conda_env="bp"):
 
 ---
 
-### Issue #4: Shell Injection - repeat.py / repeat.2.py
+### Issue #4: Shell Injection - repeat.py
 
-**파일**: `/Users/taejeong/code/somatic-variant-pipeline/utils/repeat.py` (line 12)
-         `/Users/taejeong/code/somatic-variant-pipeline/utils/repeat.2.py` (line 13)
+**파일**: `/Users/taejeong/code/somatic-variant-pipeline/utils/repeat.py` (line 13)
 **심각도**: MEDIUM (String Interpolation in Command)
 
 **취약 코드**:
@@ -728,10 +727,9 @@ def sample_list(fname: str) -> Dict[Tuple[str, str], List[Tuple[str, str]]]:
 
 ## P3: Performance Issues (성능 최적화)
 
-### Issue #11: 반복적인 samtools faidx 호출 (repeat.py / repeat.2.py)
+### Issue #11: 반복적인 samtools faidx 호출 (repeat.py)
 
 **파일**: `/Users/taejeong/code/somatic-variant-pipeline/utils/repeat.py`
-         `/Users/taejeong/code/somatic-variant-pipeline/utils/repeat.2.py`
 
 **심각도**: MEDIUM (성능 저하)
 

@@ -34,10 +34,10 @@ graph TD
 
     subgraph T3["Tier 3: Utilities (Python)"]
         direction LR
-        U1[utils/somatic_vaf.2.py]
-        U2[utils/strand_bias.2.py]
+        U1[utils/somatic_vaf.py]
+        U2[utils/strand_bias.py]
         U3[utils/alt_bq_sum.py]
-        U4[utils/repeat.2.py]
+        U4[utils/repeat.py]
         U5[utils/germline_filter.py]
         U6[utils/PON_mask.2.py]
     end
@@ -184,11 +184,11 @@ Separate INI files for b37, hg19, hg38_v0, hg38_decoy, and hg38_no_alt allow the
 - **Benefit**: Human-readable, self-contained per-build configuration; no runtime detection logic.
 - **Trade-off**: Near-identical files with no template inheritance; a new tool path must be added to all 5 files.
 
-### Decision 6: Versioned Utility Duplication (.py vs .2.py)
+### Decision 6: Unified Utilities with Optional Multiprocessing
 
-Performance-critical utilities have a v2 variant (e.g., `somatic_vaf.2.py`, `strand_bias.2.py`) with `multiprocessing` parallelization.
+Performance-critical utilities (`somatic_vaf.py`, `strand_bias.py`, `repeat.py`) support optional multiprocessing via `-n` (nproc) flag. The former `.2.py` variants have been consolidated into the main files.
 
-- **Benefit**: Incremental performance upgrades without breaking existing pipeline shell script references.
+- **Benefit**: Single source of truth per utility, backward-compatible (default `nproc=1`).
 - **Trade-off**: Dual-file maintenance burden; no semantic versioning, changelog, or formal deprecation policy.
 
 ---

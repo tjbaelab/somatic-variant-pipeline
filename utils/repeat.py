@@ -3,6 +3,7 @@
 import argparse
 import subprocess
 import sys
+from multiprocessing import Pool
 
 def ref_seq(chrom, pos1, pos2=None):
     if pos2 is None:
@@ -51,13 +52,22 @@ def run(args):
 
     header = '#chr\tpos\tref\talt\trepeat_n\trepeat_length\trepeat_seq'
     print(header, flush=True)
-    for snv in args.infile:
-        if snv[0] == '#':
-            continue
-        chrom, pos, ref, alt = snv.strip().split()[:4]
-        print('{chrom}\t{pos}\t{ref}\t{alt}\t{repeat}'.format(
-            chrom=chrom, pos=pos, ref=ref.upper(), alt=alt.upper(), 
-            repeat=repeat(chrom, pos, alt.upper())), flush=True)
+    if args.nproc > 1:
+        with Pool(args.nproc) as p:
+            for r in p.starmap(faidx, [snv.strip().split()[:4] for snv in args.infile if snv[0] != '#']):
+                print(r, flush=True)
+    else:
+        for snv in args.infile:
+            if snv[0] == '#':
+                continue
+            chrom, pos, ref, alt = snv.strip().split()[:4]
+            print(faidx(chrom, pos, ref, alt), flush=True)
+    sys.stdout.flush()
+
+def faidx(chrom, pos, ref, alt):
+    return('{chrom}\t{pos}\t{ref}\t{alt}\t{repeat}'.format(
+        chrom=chrom, pos=pos, ref=ref.upper(), alt=alt.upper(), 
+        repeat=repeat(chrom, pos, alt.upper())))
 
 def main():
     parser = argparse.ArgumentParser(
@@ -67,6 +77,11 @@ def main():
         '-r', '--ref', metavar='FILE',
         help='reference seqeunce file',
         required=True)
+
+    parser.add_argument(
+        '-n', '--nproc', metavar='INT',
+        help='Specifies the number of processors to use [default: 1]',
+        type=int, default=1)
 
     parser.add_argument(
         'infile', metavar='snv_list.txt',

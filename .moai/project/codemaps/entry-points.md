@@ -128,7 +128,7 @@ flowchart TD
         CNV_ROOT["A.CNVnator_mk_root*.sh\nparallel, after:PREP\nCNV root file creation"]
         GNOMAD["A.gnomAD_germline_filter.sh\nafter:PREP\ngermline_filter.py"]
         PASS["B.PASS_P.sh\nafter:JID_GNOMAD"]
-        VAF["C.VAF_filters*.sh\nafter:JID_PASS\nsomatic_vaf.2.py\nstrand_bias.2.py\nalt_bq_sum.py"]
+        VAF["C.VAF_filters*.sh\nafter:JID_PASS\nsomatic_vaf.py\nstrand_bias.py\nalt_bq_sum.py"]
         CNV_FILT["D.CNVnator_genotype_filter.sh\nafter:JID_VAF AND JID_CNV_ROOT\nCNVnator + bedtools"]
         MAYO["E.mayo_filters*.sh\nafter:JID_CNV_FILT\nbcftools expressions"]
         MOSAIC["E.MosaicForecast*.sh\nafter:JID_CNV_FILT\nML classifier"]
@@ -230,7 +230,7 @@ All helper scripts accept the same `-q`, `-n`, `-f`, `-r`, `-p`, `--sample-list`
 | `A.CNVnator_mk_root*.sh` | A (parallel track) | CNVnator | 4 CPU, 16GB, 8h |
 | `A.gnomAD_germline_filter.sh` | A (main track) | bcftools, `germline_filter.py` | 4 CPU, 8GB, 4h |
 | `B.PASS_P.sh` | B | bcftools view --apply-filters PASS | 2 CPU, 4GB, 1h |
-| `C.VAF_filters*.sh` | C | `somatic_vaf.2.py`, `strand_bias.2.py`, `alt_bq_sum.py` | 8 CPU, 32GB, 12h |
+| `C.VAF_filters*.sh` | C | `somatic_vaf.py`, `strand_bias.py`, `alt_bq_sum.py` | 8 CPU, 32GB, 12h |
 | `D.CNVnator_genotype_filter.sh` | D | CNVnator genotype, bedtools intersect | 4 CPU, 8GB, 4h |
 | `E.mayo_filters*.sh` | E (branch 1) | bcftools filter (strand_bias, repeat, alt_bq) | 4 CPU, 8GB, 4h |
 | `E.MosaicForecast*.sh` | E (branch 2) | MosaicForecast ML pipeline | 8 CPU, 32GB, 12h |

@@ -47,7 +47,7 @@
   - [ ] 테스트: `python3 tests/test_config.py::test_invalid_env`
   - **Reviewed By**: ___________  **Completed By**: ___________  **Date**: ___________
 
-- [ ] **P1-4 정보**: repeat.py / repeat.2.py line 12 Shell Injection
+- [ ] **P1-4 정보**: repeat.py line 13 Shell Injection
   - [ ] 코드 리뷰: IMPROVEMENT_REPORT.md → P1: Security Issues → Issue #4
   - [ ] 염색체 검증: `VALID_CHROMS = {f'chr{i}' for i in range(1, 23)}`
   - [ ] 위치 검증: `isinstance(pos, int) and pos >= 0`
@@ -83,7 +83,7 @@
   git add utils/PON_mask.2.py
   git commit -m "fix(pon_mask): fix logic bug line 56 and replace os.popen()"
 
-  git add utils/repeat.py utils/repeat.2.py
+  git add utils/repeat.py
   git commit -m "fix(repeat): add input validation for chromosome and position"
   ```
 
@@ -269,11 +269,11 @@
   - [ ] 코드 리뷰: IMPROVEMENT_REPORT.md → P3: Performance Issues → Issue #11
   - [ ] 구현:
     - [ ] lru_cache 또는 ReferenceCache 클래스
-    - [ ] repeat.py, repeat.2.py 수정
+    - [ ] repeat.py 수정
   - [ ] 성능 테스트:
     ```bash
     # 1000개 변이로 성능 측정
-    time python3 utils/repeat.2.py -r ref.fa < variants.txt
+    time python3 utils/repeat.py -r ref.fa < variants.txt
     ```
   - [ ] 목표: 90% 시간 단축
   - **Reviewed By**: ___________  **Completed By**: ___________  **Date**: ___________

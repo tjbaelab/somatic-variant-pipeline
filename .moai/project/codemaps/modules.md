@@ -240,7 +240,7 @@ Array job variants: `aln_4` and `aln_5` have array variants for per-chromosome p
 | `A.CNVnator_mk_root*.sh` | A (parallel) | CNVnator root file creation |
 | `A.gnomAD_germline_filter.sh` | A (main) | bcftools annotate, `utils/germline_filter.py` |
 | `B.PASS_P.sh` | B | bcftools view --apply-filters PASS |
-| `C.VAF_filters*.sh` | C | `utils/somatic_vaf.2.py`, strand bias, alt BQ filters |
+| `C.VAF_filters*.sh` | C | `utils/somatic_vaf.py`, strand bias, alt BQ filters |
 | `D.CNVnator_genotype_filter.sh` | D | CNVnator, bedtools intersect |
 | `E.mayo_filters*.sh` | E (branch 1) | bcftools filter (strand_bias, repeat, alt_bq expressions) |
 | `E.MosaicForecast*.sh` | E (branch 2) | MosaicForecast ML classifier |
@@ -255,11 +255,11 @@ All utility scripts are invoked directly from filtering shell scripts as command
 
 ### .py vs .2.py Version Strategy
 
-The `.2.py` suffix indicates a performance-optimized version using Python `multiprocessing`. The original `.py` file is the reference implementation. Both versions remain in the repository with no formal deprecation policy. Shell scripts in `variant_filtering/` reference `.2.py` versions for production use.
+Each utility supports optional multiprocessing via `-n` (nproc) flag. When `nproc=1` (default), runs single-process.
 
 ---
 
-### utils/somatic_vaf.py and utils/somatic_vaf.2.py
+### utils/somatic_vaf.py
 
 **Purpose**: Compute per-variant Variant Allele Frequency (VAF) from BAM pileup data. Apply a binomial statistical test to distinguish true somatic variants from sequencing noise.
 
@@ -267,25 +267,23 @@ The `.2.py` suffix indicates a performance-optimized version using Python `multi
 - Streams per-position base counts via `library.pileup.base_count()` coroutine
 - Applies binomial test (`scipy.stats.binom_test`) to assess VAF significance
 - Outputs VAF-annotated VCF records; flags variants below threshold
+- Supports multiprocessing via `-n` flag and optional config loading via `-r`/`-c`
 
-**Dependencies**: `library.misc`, `library.pileup`, `scipy.stats`
-
-**v2 enhancement**: Parallelized across variant positions using `multiprocessing.Pool`.
+**Dependencies**: `library.misc`, `library.pileup`, `scipy.stats`, `multiprocessing`
 
 ---
 
-### utils/strand_bias.py and utils/strand_bias.2.py
+### utils/strand_bias.py
 
 **Purpose**: Detect strand bias in variant-supporting reads using Fisher's exact test and Poisson-based tests. Strand bias is a common sequencing artefact that generates false positive somatic calls.
 
 **Key logic**:
-- Streams strand-aware base counts via `library.pileup.base_qual_tuple()` coroutine
+- Streams strand-aware base counts via `library.pileup.base_count()` coroutine
 - Applies Fisher's exact test (`scipy.stats.fisher_exact`) and Poisson tests via `rpy2`
 - Flags variants with statistically significant strand bias
+- Supports multiprocessing via `-n` flag and optional config loading via `-r`/`-c`
 
-**Dependencies**: `library.misc`, `library.pileup`, `scipy.stats`, `rpy2` (R integration), `statsmodels`
-
-**v2 enhancement**: Parallelized using `multiprocessing.Pool`.
+**Dependencies**: `library.misc`, `library.pileup`, `scipy.stats`, `rpy2` (R integration), `statsmodels`, `multiprocessing`
 
 ---
 
@@ -302,18 +300,17 @@ The `.2.py` suffix indicates a performance-optimized version using Python `multi
 
 ---
 
-### utils/repeat.py and utils/repeat.2.py
+### utils/repeat.py
 
 **Purpose**: Detect tandem repeat regions overlapping variant positions. Variants in repeat regions are flagged as potentially artefactual due to alignment ambiguity.
 
 **Key logic**:
-- Reads reference FASTA sequence for the variant region via `pyfaidx`
+- Reads reference FASTA sequence for the variant region via `samtools faidx`
 - Implements a sliding-window tandem repeat detection algorithm
 - Returns repeat unit and copy number for annotation
+- Supports multiprocessing via `-n` flag
 
-**Dependencies**: `pyfaidx` (FASTA indexing). No `library/` imports.
-
-**v2 enhancement**: Parallelized repeat detection across variant positions.
+**Dependencies**: `samtools` (subprocess), `multiprocessing`. No `library/` imports.
 
 ---
 

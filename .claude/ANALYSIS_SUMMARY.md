@@ -38,7 +38,7 @@
 | 1 | Shell injection - missing shlex.split() | `library/job_queue.py` | 40 | A03:Injection | 2 min |
 | 2 | os.popen() + f-string injection | `utils/PON_mask.2.py` | 46 | A03:Injection | 3 min |
 | 3 | Unvalidated shell command | `library/config.py` | 9 | A03:Injection | 2 min |
-| 4 | String interpolation in command | `utils/repeat.py,repeat.2.py` | 12,13 | A03:Injection | 2 min |
+| 4 | String interpolation in command | `utils/repeat.py` | 12,13 | A03:Injection | 2 min |
 
 ### P2: Code Quality (maintainability)
 
@@ -56,7 +56,7 @@
 
 | # | Issue | File | Type | Impact | Improvement |
 |---|-------|------|------|--------|-------------|
-| 1 | Repeated samtools faidx calls | `repeat.py`, `repeat.2.py` | Caching | 1M calls → 100K | 90x faster |
+| 1 | Repeated samtools faidx calls | `repeat.py` | Caching | 1M calls → 100K | 90x faster |
 | 2 | DataFrame created per worker | `PON_mask.2.py` | Memory | 80% reduction | 40% faster |
 | 3 | No memoization | `ref_seq()` | Caching | Wasted I/O | 10x faster |
 
@@ -124,9 +124,9 @@
 - **Effort**: 30 min (refactor), 30 min (caching)
 - **Recommendation**: Add input validation, implement caching
 
-#### `repeat.2.py` (106 lines)
+#### `repeat.py` (now includes multiprocessing)
 - **Status**: 🟠 WARNING
-- **Issues**: Same as repeat.py + multiprocessing complexity
+- **Issues**: Shell injection in ref_seq() + multiprocessing complexity
 - **Effort**: 30 min (refactor), 30 min (caching)
 - **Recommendation**: Share code with repeat.py
 

@@ -71,7 +71,7 @@ flowchart TD
 | VQSR | Combined gVCF | Recalibrated VCF | GATK4 VariantRecalibrator + ApplyVQSR | `<sample>.vqsr.vcf.gz` |
 | gnomAD filter | VQSR VCF | Population-filtered VCF | bcftools + `germline_filter.py` | `<sample>.gnomad.vcf.gz` |
 | PASS filter | gnomAD VCF | PASS-only VCF | bcftools view -f PASS | `<sample>.pass.vcf.gz` |
-| VAF filters | PASS VCF | VAF-annotated VCF | `somatic_vaf.2.py`, `strand_bias.2.py`, `alt_bq_sum.py` | `<sample>.vaf.vcf.gz` |
+| VAF filters | PASS VCF | VAF-annotated VCF | `somatic_vaf.py`, `strand_bias.py`, `alt_bq_sum.py` | `<sample>.vaf.vcf.gz` |
 | CNV filter | VAF VCF | CNV-excluded VCF | CNVnator + bedtools intersect | `<sample>.cnv.vcf.gz` |
 | Mayo filters | CNV VCF | Expression-filtered VCF | bcftools filter (strand_bias, repeat, alt_bq) | `<sample>.mayo.vcf.gz` |
 | MosaicForecast | CNV VCF | Mosaic-classified VCF | MosaicForecast ML pipeline | `<sample>.mosaic.vcf.gz` |
@@ -163,8 +163,8 @@ flowchart TD
     end
 
     subgraph C["Stage C - VAF Filters"]
-        C1["somatic_vaf.2.py\nbinomial test\npileup-based VAF"]
-        C2["strand_bias.2.py\nFisher exact + Poisson\nstrand-aware pileup"]
+        C1["somatic_vaf.py\nbinomial test\npileup-based VAF"]
+        C2["strand_bias.py\nFisher exact + Poisson\nstrand-aware pileup"]
         C3["alt_bq_sum.py\nalternate allele\nbase quality sum"]
     end
 
@@ -174,7 +174,7 @@ flowchart TD
     end
 
     subgraph E["Stage E - Two Parallel Branches"]
-        E1["mayo_filters*.sh\nbcftools filter expressions\nstrand_bias + repeat + alt_bq\nrepeat.2.py"]
+        E1["mayo_filters*.sh\nbcftools filter expressions\nstrand_bias + repeat + alt_bq\nrepeat.py"]
         E2["MosaicForecast*.sh\nML-based mosaic classifier\nfeature extraction from BAM"]
     end
 
@@ -206,9 +206,9 @@ flowchart TD
 | gnomAD germline | A | Remove variants with gnomAD AF above threshold (typically > 0.001) | `utils/germline_filter.py` | `downloads/gnomAD*.vcf.gz` |
 | CNV root creation | A (parallel) | Create CNVnator BAM depth histogram root files | CNVnator (C++ binary) | Sample BAM/CRAM |
 | PASS filter | B | Retain only GATK VQSR PASS-tagged records; remove FILTERED | bcftools only | VQSR FILTER field |
-| VAF filters | C | Binomial test on VAF; Fisher exact on strand bias; alt BQ sum threshold | `utils/somatic_vaf.2.py`, `utils/strand_bias.2.py`, `utils/alt_bq_sum.py` | BAM pileup via samtools |
+| VAF filters | C | Binomial test on VAF; Fisher exact on strand bias; alt BQ sum threshold | `utils/somatic_vaf.py`, `utils/strand_bias.py`, `utils/alt_bq_sum.py` | BAM pileup via samtools |
 | CNV genotype | D | Exclude variants overlapping CNVnator-called CNV regions | CNVnator + bedtools | Stage A CNV root files |
-| Mayo filters | E (branch 1) | Hard filters: strand bias ratio, tandem repeat region, alt BQ sum cutoffs | `utils/repeat.2.py` (via bcftools) | BAM + reference FASTA |
+| Mayo filters | E (branch 1) | Hard filters: strand bias ratio, tandem repeat region, alt BQ sum cutoffs | `utils/repeat.py` (via bcftools) | BAM + reference FASTA |
 | MosaicForecast | E (branch 2) | ML-based somatic mosaic variant scoring and classification | MosaicForecast Python pipeline | BAM + VCF features |
 | PON mask | F | Remove variants recurrently present in Panel of Normals cohort | `utils/PON_mask.2.py` | `downloads/PON*.bed` split files |
 | Final assembly | G | Merge mayo and mosaic-filtered VCFs into single final output | bcftools | Stage E branch outputs |

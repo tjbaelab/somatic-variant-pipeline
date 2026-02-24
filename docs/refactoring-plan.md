@@ -235,8 +235,8 @@ pytest tests/ -v  # Layer 1, 2, 3 all pass on macOS
 
 - Remove `opt_old()` functions from `run_variant_filtering.py`, `submit_filtering_jobs.py`
 - Remove SGE `#$` comment directives from shell scripts
-- Remove legacy `.1` utils: rename `somatic_vaf.2.py` -> `somatic_vaf.py` (etc.)
-  - Update all shell script references to drop `.2.` suffix
+- ~~Remove legacy `.1` utils: rename `somatic_vaf.2.py` -> `somatic_vaf.py` (etc.)~~ **DONE**
+  - ~~Update all shell script references to drop `.2.` suffix~~ **DONE**
 
 ### Verification
 

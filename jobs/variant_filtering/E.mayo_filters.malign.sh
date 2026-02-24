@@ -57,7 +57,7 @@ DONE1=$SM/run_status/Mayo_filters.strand.malign.ploidy_$PL.done
 if [[ -f $DONE1 ]]; then
     echo "Skip calculating strand bias. Already done."
 else
-    cut -f1-4 $IN | $PYTHON3 $PIPE_HOME/utils/strand_bias.2.py -q 20 -Q 20 -b "$BAMS" -r $REFVER -c $CONDA_ENV -n $((NSLOTS-2)) > $STR
+    cut -f1-4 $IN | $PYTHON3 $PIPE_HOME/utils/strand_bias.py -q 20 -Q 20 -b "$BAMS" -r $REFVER -c $CONDA_ENV -n $((NSLOTS-2)) > $STR
     mkdir -p $SM/run_status
     touch $DONE1
 fi
@@ -68,7 +68,7 @@ DONE2=$SM/run_status/Mayo_filters.repeat.malign.ploidy_$PL.done
 if [[ -f $DONE2 ]]; then
     echo "Skip calculating repeat info. Already done."
 else
-    cut -f1-4 $IN | $PYTHON3 $PIPE_HOME/utils/repeat.2.py -r $REF -n $((NSLOTS-2)) > $REP
+    cut -f1-4 $IN | $PYTHON3 $PIPE_HOME/utils/repeat.py -r $REF -n $((NSLOTS-2)) > $REP
     mkdir -p $SM/run_status
     touch $DONE2
 fi

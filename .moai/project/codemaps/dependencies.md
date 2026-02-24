@@ -90,13 +90,13 @@ Shell scripts in `jobs/variant_filtering/` invoke Python utility scripts via sub
 | Shell Script | Python Utility Invoked | Invocation Pattern |
 |---|---|---|
 | `A.gnomAD_germline_filter.sh` | `utils/germline_filter.py` | `python germline_filter.py <vcf> <gnomad_vcf> <out>` |
-| `C.VAF_filters*.sh` | `utils/somatic_vaf.2.py` | `python somatic_vaf.2.py <vcf> <bam> <ref> <out>` |
-| `C.VAF_filters*.sh` | `utils/strand_bias.2.py` | `python strand_bias.2.py <vcf> <bam> <out>` |
+| `C.VAF_filters*.sh` | `utils/somatic_vaf.py` | `python somatic_vaf.py <vcf> <bam> <ref> <out>` |
+| `C.VAF_filters*.sh` | `utils/strand_bias.py` | `python strand_bias.py <vcf> <bam> <out>` |
 | `C.VAF_filters*.sh` | `utils/alt_bq_sum.py` | `python alt_bq_sum.py <vcf> <bam> <out>` |
-| `E.mayo_filters*.sh` | `utils/repeat.2.py` | `python repeat.2.py <vcf> <ref> <out>` |
+| `E.mayo_filters*.sh` | `utils/repeat.py` | `python repeat.py <vcf> <ref> <out>` |
 | `F.PON_mask.sh` | `utils/PON_mask.2.py` | `python PON_mask.2.py <vcf> <pon_dir> <out>` |
 
-**Note**: The `.2.py` versions are used in production shell scripts. The original `.py` files remain as reference implementations.
+**Note**: The `.2.py` versions have been consolidated into the main `.py` files with multiprocessing support via `-n` flag.
 
 ---
 
@@ -141,7 +141,7 @@ Shell scripts in `jobs/variant_filtering/` invoke Python utility scripts via sub
 | Package | Purpose | Used By |
 |---|---|---|
 | `pysam` | BAM/CRAM/VCF Python API | `utils/germline_filter.py`, `utils/PON_mask.2.py` |
-| `pyfaidx` | FASTA file indexing and random access | `utils/repeat.py`, `utils/repeat.2.py` |
+| `pyfaidx` | FASTA file indexing and random access | `utils/repeat.py` |
 | `bwa` | Alignment tool (conda-managed binary) | `aln_1.align_sort.sh` |
 | `samtools` | SAM/BAM manipulation binary | Multiple shell scripts |
 | `sambamba` | Parallel duplicate marking binary | `aln_1`, `aln_3` |
@@ -157,7 +157,7 @@ Shell scripts in `jobs/variant_filtering/` invoke Python utility scripts via sub
 | `statsmodels` | Additional statistical tests | `utils/strand_bias.py` |
 | `numpy` | Numerical arrays for statistical calculations | `utils/somatic_vaf.py`, `utils/strand_bias.py` |
 | `pandas` | DataFrame-based PON position lookup | `utils/PON_mask.2.py` |
-| `rpy2` | R integration for Poisson-based strand bias tests | `utils/strand_bias.2.py` |
+| `rpy2` | R integration for Poisson-based strand bias tests | `utils/strand_bias.py` |
 
 ### R Packages (via rpy2)
 
