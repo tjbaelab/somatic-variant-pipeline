@@ -8,3 +8,12 @@ __pycache__/
 /tools/
 /resources/
 /resources.old/
+
+# AI agent temp files
+.claude/
+.moai/manifest.json
+.moai/status_line.sh
+.moai/config/
+.moai/logs/
+.moai/memory/
+*.mcp.json
