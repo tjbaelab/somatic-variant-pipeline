@@ -20,10 +20,9 @@ def read_config(reference = "b37", conda_env = "bp"):
     tools_ini = os.path.join(pipe_home, "config", "tools.ini")
     ref_ini = os.path.join(pipe_home, "config", "references", ref_key + ".ini")
 
-    if os.path.exists(tools_ini) and os.path.exists(ref_ini):
-        config.read([tools_ini, ref_ini])
-    else:
-        config.read(pipe_home + ("/config.hg19.ini" if reference == "hg19" else "/config.hg38.ini" if reference == "hg38" else "/config.ini"))
+    if not os.path.exists(ref_ini):
+        raise FileNotFoundError("Reference config not found: {}".format(ref_ini))
+    config.read([tools_ini, ref_ini])
 
     for section in ["TOOLS", "RESOURCES"]:
         for key in config[section]:
@@ -45,6 +44,13 @@ def run_info(fname, reference, conda_env = "bp"):
 def run_info_append(fname, line):
     with open(fname, "a") as run_file:
         run_file.write(line + "\n")
+
+def write_run_options(fname, options):
+    """Write #RUN_OPTIONS section to run_info file."""
+    with open(fname, "a") as f:
+        f.write("\n#RUN_OPTIONS\n")
+        for key, value in options.items():
+            f.write("{}={}\n".format(key, value))
 
 def log_dir(sample):
     log_dir = sample+"/logs"

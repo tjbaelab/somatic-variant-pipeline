@@ -11,7 +11,7 @@ pipe_home = os.path.normpath(cmd_home + "/..")
 job_home = pipe_home + "/jobs/genome_mapping"
 sys.path.append(pipe_home)
 
-from library.config import run_info, run_info_append
+from library.config import run_info, write_run_options
 from library.job_queue import sbatch_opt as opt
 from library.parser import sample_list
 from library.job_queue import GridEngineQueue
@@ -36,23 +36,26 @@ def main():
 
         f_run_info = sample + "/run_info"
         run_info(f_run_info, args.reference, args.conda_env)
-        run_info_append(f_run_info, "\n#RUN_OPTIONS")
-        run_info_append(f_run_info, "Q={}".format(args.queue))
-        run_info_append(f_run_info, "CONDA_ENV={}".format(args.conda_env))
-        run_info_append(f_run_info, "SAMPLE_LIST={}".format(args.sample_list))
-        run_info_append(f_run_info, "ALIGNFMT={}".format(args.align_fmt))
-        run_info_append(f_run_info, "FILETYPE={}".format(filetype))
-        run_info_append(f_run_info, "REFVER={}".format(args.reference))
-        run_info_append(f_run_info, "SKIP_CNVNATOR={}".format(args.skip_cnvnator))
-        run_info_append(f_run_info, "RUN_MUTECT_SINGLE={}".format(args.run_mutect_single))
-        run_info_append(f_run_info, "RUN_FILTERS={}".format(args.run_filters))
-        run_info_append(f_run_info, "MULTI_ALIGNS={}".format(args.multiple_alignments))
-        run_info_append(f_run_info, "TARGET_SEQ={}".format(args.target_seq))
+        options = {
+            "Q": args.queue,
+            "CONDA_ENV": args.conda_env,
+            "SAMPLE_LIST": args.sample_list,
+            "ALIGNFMT": args.align_fmt,
+            "FILETYPE": filetype,
+            "REFVER": args.reference,
+            "SKIP_CNVNATOR": args.skip_cnvnator,
+            "RUN_MUTECT_SINGLE": args.run_mutect_single,
+            "RUN_FILTERS": args.run_filters,
+            "MULTI_ALIGNS": args.multiple_alignments,
+            "TARGET_SEQ": args.target_seq,
+        }
         if args.run_gatk_hc:
             ploidy = " ".join(str(i) for i in args.run_gatk_hc)
-            run_info_append(f_run_info, "RUN_GATK_HC=True\nPLOIDY=\"{}\"".format(ploidy))
+            options["RUN_GATK_HC"] = "True"
+            options["PLOIDY"] = '"{}"'.format(ploidy)
         else:
-            run_info_append(f_run_info, "RUN_GATK_HC={}".format(args.run_gatk_hc))
+            options["RUN_GATK_HC"] = args.run_gatk_hc
+        write_run_options(f_run_info, options)
 
         if filetype == "bam":
             jid = submit_pre_jobs_bam(sample, sdata, args.queue)
