@@ -6,7 +6,7 @@ run_info contract generation, and vcf_directory branching.
 
 import os
 import pytest
-from jobs import run_variant_filtering as mod
+from pipeline import run_variant_filtering as mod
 
 
 class MockQueue:

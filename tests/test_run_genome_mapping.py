@@ -7,7 +7,7 @@ download concurrency queue, and job submission DAG.
 
 import os
 import pytest
-from jobs import run_genome_mapping as mod
+from pipeline import run_genome_mapping as mod
 
 
 class MockQueue:

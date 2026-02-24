@@ -56,19 +56,19 @@ else
     mkdir -p $SM/run_status
     if [[ $RUN_GATK_HC = "True" ]]; then
         if [[ $MULTI_ALIGNS = "True" ]]; then
-            $PYTHON3 $PIPE_HOME/jobs/submit_gatk-hc_jobs.py --queue $Q --ploidy $PLOIDY --sample-name $SM --multiple-alignments
+            $PYTHON3 $PIPE_HOME/pipeline/submit_gatk-hc_jobs.py --queue $Q --ploidy $PLOIDY --sample-name $SM --multiple-alignments
             echo "[INFO] Submitted gatk-hc jobs for combined calling."
         else
             #ssh -o StrictHostKeyChecking=no $SGE_O_HOST \
-            #    "bash --login -c 'cd $SGE_O_WORKDIR; $PYTHON3 $PIPE_HOME/jobs/submit_gatk-hc_jobs.py --ploidy $PLOIDY --sample-name $SM'"
-            $PYTHON3 $PIPE_HOME/jobs/submit_gatk-hc_jobs.py --queue $Q --ploidy $PLOIDY --sample-name $SM
+            #    "bash --login -c 'cd $SGE_O_WORKDIR; $PYTHON3 $PIPE_HOME/pipeline/submit_gatk-hc_jobs.py --ploidy $PLOIDY --sample-name $SM'"
+            $PYTHON3 $PIPE_HOME/pipeline/submit_gatk-hc_jobs.py --queue $Q --ploidy $PLOIDY --sample-name $SM
             echo "[INFO] Submitted gatk-hc jobs."
         fi
     fi
     if [[ $RUN_MUTECT_SINGLE = "True" ]]; then
         #ssh -o StrictHostKeyChecking=no $SGE_O_HOST \
-        #    "bash --login -c 'cd $SGE_O_WORKDIR; $PYTHON3 $PIPE_HOME/jobs/submit_mutect-single_jobs.py --sample-name $SM'"
-        $PYTHON3 $PIPE_HOME/jobs/submit_mutect-single_jobs.py --sample-name $SM
+        #    "bash --login -c 'cd $SGE_O_WORKDIR; $PYTHON3 $PIPE_HOME/pipeline/submit_mutect-single_jobs.py --sample-name $SM'"
+        $PYTHON3 $PIPE_HOME/pipeline/submit_mutect-single_jobs.py --sample-name $SM
     fi
 fi
 

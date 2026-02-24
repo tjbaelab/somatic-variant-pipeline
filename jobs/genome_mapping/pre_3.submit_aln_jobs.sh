@@ -29,12 +29,12 @@ printf -- "---\n[$(date)] Start submit aln jobs.\n"
 #done
 
 #ssh -o StrictHostKeyChecking=no $SGE_O_HOST \
-#    "bash --login -c 'cd $SGE_O_WORKDIR; $PYTHON3 $PIPE_HOME/jobs/submit_aln_jobs.py --sample-name $SM'"
+#    "bash --login -c 'cd $SGE_O_WORKDIR; $PYTHON3 $PIPE_HOME/pipeline/submit_aln_jobs.py --sample-name $SM'"
 
 if [ $TARGET_SEQ = "True" ]; then
-    $PYTHON3 $PIPE_HOME/jobs/submit_aln_jobs.py --queue $Q --sample-name $SM -t
+    $PYTHON3 $PIPE_HOME/pipeline/submit_aln_jobs.py --queue $Q --sample-name $SM -t
 else
-    $PYTHON3 $PIPE_HOME/jobs/submit_aln_jobs.py --queue $Q --sample-name $SM
+    $PYTHON3 $PIPE_HOME/pipeline/submit_aln_jobs.py --queue $Q --sample-name $SM
 fi
 
 conda deactivate

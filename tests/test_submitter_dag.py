@@ -65,7 +65,7 @@ class TestAlignmentDAG:
         self.mock_q = MockQueue()
         self.tmp_path = tmp_path
 
-        from jobs import submit_aln_jobs
+        from pipeline import submit_aln_jobs
         self.mod = submit_aln_jobs
 
         monkeypatch.setattr(self.mod, "log_dir",
@@ -174,7 +174,7 @@ class TestHaplotypeCallerDAG:
     @pytest.fixture(autouse=True)
     def setup(self, tmp_path, monkeypatch):
         self.mock_q = MockQueue()
-        self.mod = importlib.import_module("jobs.submit_gatk-hc_jobs")
+        self.mod = importlib.import_module("pipeline.submit_gatk-hc_jobs")
 
         monkeypatch.setattr(self.mod, "q", self.mock_q)
         monkeypatch.setattr(self.mod, "log_dir",
@@ -280,7 +280,7 @@ class TestFilteringDAG:
     def setup(self, tmp_path, monkeypatch):
         self.mock_q = MockQueue()
 
-        from jobs import submit_filtering_jobs
+        from pipeline import submit_filtering_jobs
         self.mod = submit_filtering_jobs
 
         monkeypatch.setattr(self.mod, "q", self.mock_q)

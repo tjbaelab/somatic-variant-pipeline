@@ -68,11 +68,11 @@ printf -- "[$(date)] Start submitting variant filtering jobs.\n---\n"
 
 mkdir -p $SM/run_status
 if [[ $MULTI_ALIGNS = "False" ]]; then
-    $PYTHON3 $PIPE_HOME/jobs/submit_filtering_jobs.py --queue $Q --ploidy $PLOIDY --sample-name $SM
+    $PYTHON3 $PIPE_HOME/pipeline/submit_filtering_jobs.py --queue $Q --ploidy $PLOIDY --sample-name $SM
     echo "---"
     echo "Submitted filtering jobs with single alignment."
 else
-    $PYTHON3 $PIPE_HOME/jobs/submit_filtering_jobs.py --queue $Q --ploidy $PLOIDY --sample-name $SM --multiple-alignments
+    $PYTHON3 $PIPE_HOME/pipeline/submit_filtering_jobs.py --queue $Q --ploidy $PLOIDY --sample-name $SM --multiple-alignments
     echo "---"
     echo "Submitted filtering jobs with multiple alignments."
 fi

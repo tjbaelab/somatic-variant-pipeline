@@ -6,7 +6,7 @@ run_info contract generation, and error conditions.
 
 import os
 import pytest
-from jobs import run_variant_calling as mod
+from pipeline import run_variant_calling as mod
 
 
 class MockQueue:
