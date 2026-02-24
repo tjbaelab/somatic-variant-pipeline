@@ -14,6 +14,7 @@ import importlib
 import os
 import sys
 import pytest
+import library.job_queue as jq_mod
 
 
 class MockQueue:
@@ -68,7 +69,7 @@ class TestAlignmentDAG:
         from pipeline import submit_aln_jobs
         self.mod = submit_aln_jobs
 
-        monkeypatch.setattr(self.mod, "log_dir",
+        monkeypatch.setattr(jq_mod, "log_dir",
                             lambda sample: str(tmp_path / sample / "logs"))
         monkeypatch.setattr(self.mod, "save_hold_jid",
                             lambda fname, jid: None)
@@ -177,7 +178,7 @@ class TestHaplotypeCallerDAG:
         self.mod = importlib.import_module("pipeline.submit_gatk-hc_jobs")
 
         monkeypatch.setattr(self.mod, "q", self.mock_q)
-        monkeypatch.setattr(self.mod, "log_dir",
+        monkeypatch.setattr(jq_mod, "log_dir",
                             lambda sample: str(tmp_path / sample / "logs"))
         monkeypatch.setattr(self.mod, "save_hold_jid",
                             lambda fname, jid: None)
@@ -284,7 +285,7 @@ class TestFilteringDAG:
         self.mod = submit_filtering_jobs
 
         monkeypatch.setattr(self.mod, "q", self.mock_q)
-        monkeypatch.setattr(self.mod, "log_dir",
+        monkeypatch.setattr(jq_mod, "log_dir",
                             lambda sample: str(tmp_path / sample / "logs"))
         monkeypatch.setattr(self.mod, "save_hold_jid",
                             lambda fname, jid: None)

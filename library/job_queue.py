@@ -6,6 +6,25 @@ import os
 from collections import defaultdict
 
 
+from library.config import log_dir
+
+
+def sbatch_opt(sample, Q, jid=None):
+    """Build sbatch options for a single job."""
+    opt = "--partition={q} --output {log_dir}/%x.%j.stdout --error {log_dir}/%x.%j.stderr --parsable".format(q=Q, log_dir=log_dir(sample))
+    if jid is not None:
+        opt = "-d afterok:{jid} {opt}".format(jid=jid, opt=opt)
+    return opt
+
+
+def sbatch_opt_array(sample, Q, jid=None):
+    """Build sbatch options for an array job."""
+    opt = "--partition={q} --output {log_dir}/%x.%A.%a.stdout --error {log_dir}/%x.%A.%a.stderr --parsable".format(q=Q, log_dir=log_dir(sample))
+    if jid is not None:
+        opt = "-d afterok:{jid} {opt}".format(jid=jid, opt=opt)
+    return opt
+
+
 class GridEngineQueue:
 
     def __init__(self):

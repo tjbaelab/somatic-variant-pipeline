@@ -7,11 +7,11 @@ import sys
 
 cmd_home = os.path.dirname(os.path.realpath(__file__))
 pipe_home = os.path.normpath(cmd_home + "/..")
-job_home = cmd_home + "/variant_calling"
+job_home = pipe_home + "/jobs/variant_calling"
 sys.path.append(pipe_home)
 
-from library.config import log_dir, save_hold_jid
-from library.job_queue import GridEngineQueue
+from library.config import save_hold_jid
+from library.job_queue import GridEngineQueue, sbatch_opt as opt, sbatch_opt_array as opt_array
 q = GridEngineQueue()
 
 def main():
@@ -24,7 +24,7 @@ def main():
     jid = ",".join(jid_list)
     jid = q.submit(opt(args.sample_name, args.queue, jid),
         "{job_home}/start_variant_filtering.sh {sample}".format(
-            job_home = cmd_home + "/variant_filtering/prep", sample=args.sample_name))
+            job_home = pipe_home + "/jobs/variant_filtering/prep", sample=args.sample_name))
     save_hold_jid("{sample}/gatk-hc/hold_jid".format(sample=args.sample_name), jid)
     
 def parse_args():
@@ -35,18 +35,6 @@ def parse_args():
     parser.add_argument('--hold_jid', default=None)
     parser.add_argument('--sample-name', metavar='sample name', required=True)
     return parser.parse_args()
-
-def opt(sample, Q, jid=None):
-    opt = "--partition={q} --output {log_dir}/%x.%j.stdout --error {log_dir}/%x.%j.stderr --parsable".format(q=Q, log_dir=log_dir(sample))
-    if jid is not None:
-        opt = "-d afterok:{jid} {opt}".format(jid=jid, opt=opt)
-    return opt
-
-def opt_array(sample, Q, jid=None):
-    opt = "--partition={q} --output {log_dir}/%x.%A.%a.stdout --error {log_dir}/%x.%A.%a.stderr --parsable".format(q=Q, log_dir=log_dir(sample))
-    if jid is not None:
-        opt = "-d afterok:{jid} {opt}".format(jid=jid, opt=opt)
-    return opt
 
 def submit_jobs(sample, Q, ploidy, jid, malign):
     if malign:

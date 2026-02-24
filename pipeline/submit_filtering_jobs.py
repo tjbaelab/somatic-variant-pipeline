@@ -7,11 +7,11 @@ import sys
 
 cmd_home = os.path.dirname(os.path.realpath(__file__))
 pipe_home = os.path.normpath(cmd_home + "/..")
-job_home = cmd_home + "/variant_filtering"
+job_home = pipe_home + "/jobs/variant_filtering"
 sys.path.append(pipe_home)
 
-from library.config import log_dir, save_hold_jid
-from library.job_queue import GridEngineQueue
+from library.config import save_hold_jid
+from library.job_queue import GridEngineQueue, sbatch_opt as opt
 q = GridEngineQueue()
 
 def main():
@@ -34,12 +34,6 @@ def parse_args():
     parser.add_argument('--sample-name', metavar='sample name', required=True)
     parser.add_argument('--multiple-alignments', action='store_true', default=False)
     return parser.parse_args()
-
-def opt(sample, Q, jid=None):
-    opt = "--partition={q} --output {log_dir}/%x.%j.stdout --error {log_dir}/%x.%j.stderr --parsable".format(q=Q, log_dir=log_dir(sample))
-    if jid is not None:
-        opt = "-d afterok:{jid} {opt}".format(jid=jid, opt=opt)
-    return opt
 
 def submit_jobs(sample, Q, ploidy, malign, jid_cnvnator):
     jid = q.submit(opt(sample, Q),

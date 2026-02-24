@@ -8,10 +8,11 @@ from collections import deque
 
 cmd_home = os.path.dirname(os.path.realpath(__file__))
 pipe_home = os.path.normpath(cmd_home + "/..")
-job_home = cmd_home + "/genome_mapping"
+job_home = pipe_home + "/jobs/genome_mapping"
 sys.path.append(pipe_home)
 
-from library.config import run_info, run_info_append, log_dir
+from library.config import run_info, run_info_append
+from library.job_queue import sbatch_opt as opt
 from library.parser import sample_list
 from library.job_queue import GridEngineQueue
 q = GridEngineQueue()
@@ -60,12 +61,6 @@ def main():
 
         submit_aln_jobs(sample, args.queue, jid)
         print()
-
-def opt(sample, Q, jid=None):
-    opt = "--partition={q} --output {log_dir}/%x.%j.stdout --error {log_dir}/%x.%j.stderr --parsable".format(q=Q, log_dir=log_dir(sample))
-    if jid is not None:
-        opt = "-d afterok:{jid} {opt}".format(jid=jid, opt=opt)
-    return opt
 
 def submit_pre_jobs_fastq(sample, sdata, Q):
     global down_jid_queue

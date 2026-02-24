@@ -7,12 +7,12 @@ from collections import defaultdict, deque
 
 cmd_home = os.path.dirname(os.path.realpath(__file__))
 pipe_home = os.path.normpath(cmd_home + "/..")
-job_home = cmd_home + "/variant_calling"
+job_home = pipe_home + "/jobs/variant_calling"
 sys.path.append(pipe_home)
 
-from library.config import run_info, run_info_append, log_dir
+from library.config import run_info, run_info_append
 from library.parser import sample_list
-from library.job_queue import GridEngineQueue
+from library.job_queue import GridEngineQueue, sbatch_opt as opt
 q = GridEngineQueue()
 
 def main():
@@ -81,12 +81,6 @@ def main():
                 job_home=job_home, sample=sample))
 
         print()
-
-def opt(sample, Q, jid=None):
-    opt = "--partition={q} --output {log_dir}/%x.%j.stdout --error {log_dir}/%x.%j.stderr --parsable".format(q=Q, log_dir=log_dir(sample))
-    if jid is not None:
-        opt = "-d afterok:{jid} {opt}".format(jid=jid, opt=opt)
-    return opt
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Variant Calling Pipeline')

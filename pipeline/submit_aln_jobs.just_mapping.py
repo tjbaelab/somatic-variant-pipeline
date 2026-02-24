@@ -8,11 +8,11 @@ import re
 
 cmd_home = os.path.dirname(os.path.realpath(__file__))
 pipe_home = os.path.normpath(cmd_home + "/..")
-job_home = cmd_home + "/genome_mapping"
+job_home = pipe_home + "/jobs/genome_mapping"
 sys.path.append(pipe_home)
 
-from library.config import log_dir, save_hold_jid
-from library.job_queue import GridEngineQueue
+from library.config import save_hold_jid
+from library.job_queue import GridEngineQueue, sbatch_opt as opt
 
 def main():
     args = parse_args()
@@ -64,12 +64,6 @@ def parse_args():
     parser.add_argument('-t', '--target-seq', action='store_true', default=False)
     parser.add_argument('--sample-name', metavar='sample name', required=True)
     return parser.parse_args()
-
-def opt(sample, Q, jid=None):
-    opt = "--partition={q} --output {log_dir}/%x.%j.stdout --error {log_dir}/%x.%j.stderr --parsable".format(q=Q, log_dir=log_dir(sample))
-    if jid is not None:
-        opt = "-d afterok:{jid} {opt}".format(jid=jid, opt=opt)
-    return opt
 
 if __name__ == "__main__":
     main()
