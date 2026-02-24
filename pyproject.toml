@@ -1,0 +1,11 @@
+[project]
+name = "somatic-variant-pipeline"
+version = "0.0.1"
+requires-python = ">=3.8"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 120
