@@ -3,7 +3,6 @@
 import argparse
 import os
 import sys
-from collections import deque
 
 cmd_home = os.path.dirname(os.path.realpath(__file__))
 pipe_home = os.path.normpath(cmd_home + "/..")
@@ -22,9 +21,6 @@ def main():
 
     os.environ["PIPELINE_BACKEND"] = args.backend
     q = create_queue()
-
-    global down_jid_queue
-    down_jid_queue = deque([None] * args.con_down_limit)
 
     samples = sample_list(args.sample_list)
     for (sample, filetype), sdata in samples.items():
@@ -63,27 +59,9 @@ def main():
         if filetype == "fastq":
             raise Exception("The input filetype should be bam or cram.")
 
-        #global down_jid
-        #jid_list = []
-        #for fname, loc in sdata:
-        #    down_jid = down_jid_queue.popleft()
-        #    jid = q.submit(opt(sample, args.queue, down_jid), 
-        #            "{job_home}/pre_1.download.sh {sample} {fname} {loc}".format(
-        #                job_home=job_home, sample=sample, fname=fname, loc=loc))
-        #    jid_list.append(jid)
-        #    down_jid_queue.append(jid)
-        #jid = ",".join(jid_list)
-
         if args.align_fmt == "cram" and filetype == "bam":
             raise Exception("alignment format should be set to {}".format(filetype))
-            #jid = q.submit(opt(sample, args.queue),
-            #    "{job_home}/pre_2.bam2cram.sh {sample}".format(
-            #        job_home=job_home, sample=sample))
-            #jid = q.submit(opt(sample, args.queue, jid),
-            #    "{job_home}/pre_2b.unmapped_reads.sh {sample}".format(
-            #        job_home=job_home, sample=sample))
 
-        #jid = q.submit(opt(sample, args.queue, jid),
         jid = q.submit(opt(sample, args.queue),
             "{job_home}/pre_3.run_variant_calling.sh {sample}".format(
                 job_home=job_home, sample=sample))

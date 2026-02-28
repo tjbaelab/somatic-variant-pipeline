@@ -24,7 +24,6 @@ def main():
     os.environ["PIPELINE_BACKEND"] = args.backend
     q = create_queue()
 
-    global down_jid_queue
     down_jid_queue = deque([None] * args.con_down_limit)
 
     samples = sample_list(args.sample_list)
@@ -62,16 +61,14 @@ def main():
         write_run_options(f_run_info, options)
 
         if filetype == "bam":
-            jid = submit_pre_jobs_bam(sample, sdata, args.queue)
+            jid = submit_pre_jobs_bam(sample, sdata, args.queue, down_jid_queue)
         else:
-            jid = submit_pre_jobs_fastq(sample, sdata, args.queue)
+            jid = submit_pre_jobs_fastq(sample, sdata, args.queue, down_jid_queue)
 
         submit_aln_jobs(sample, args.queue, jid)
         print()
 
-def submit_pre_jobs_fastq(sample, sdata, Q):
-    global down_jid_queue
-
+def submit_pre_jobs_fastq(sample, sdata, Q, down_jid_queue):
     jid_per_read = {"R1":[], "R2":[]}
     fq_per_read = {"R1":[], "R2":[]}
     for fname, loc in sdata:
@@ -97,10 +94,9 @@ def submit_pre_jobs_fastq(sample, sdata, Q):
 
     return jid
 
-def submit_pre_jobs_bam(sample, sdata, Q):
+def submit_pre_jobs_bam(sample, sdata, Q, down_jid_queue):
     fname, loc = sdata[0]
 
-    global down_jid_queue
     down_jid = down_jid_queue.popleft()
 
     jid = q.submit(opt(sample, Q, down_jid), 
