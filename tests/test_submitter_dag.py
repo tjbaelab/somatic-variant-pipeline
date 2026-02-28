@@ -166,6 +166,24 @@ class TestAlignmentDAG:
         assert scripts[1] == "aln_2.merge_bam.sh"
         assert len(scripts) == 8  # 1 less aln_1 than 2-PU case
 
+    def test_mapping_only_dag(self, monkeypatch):
+        """--mapping-only stops after merge_bam, skipping all post-alignment steps."""
+        monkeypatch.setattr("glob.glob", lambda pattern: [
+            "SAMPLE1/fastq/SAMPLE1.PU1.R1.fastq.gz",
+            "SAMPLE1/fastq/SAMPLE1.PU2.R1.fastq.gz",
+        ])
+        monkeypatch.setattr("sys.argv", [
+            "submit_aln_jobs.py", "--queue", "normal",
+            "--sample-name", "SAMPLE1", "--mapping-only",
+        ])
+
+        self.mod.main()
+
+        scripts = script_names(self.mock_q.calls)
+        assert len(scripts) == 3  # 2 aln_1 + 1 merge
+        assert sorted(scripts[:2]) == ["aln_1.align_sort.sh", "aln_1.align_sort.sh"]
+        assert scripts[2] == "aln_2.merge_bam.sh"
+
 
 # ---------------------------------------------------------------------------
 # submit_gatk-hc_jobs

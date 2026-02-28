@@ -35,8 +35,11 @@ def main():
     else:
         jid = None
     
-    jid = q.submit(opt(args.sample_name, args.queue, jid), 
+    jid = q.submit(opt(args.sample_name, args.queue, jid),
         "{job_home}/aln_2.merge_bam.sh {sample}".format(job_home=job_home, sample=args.sample_name))
+
+    if args.mapping_only:
+        return
 
     if not args.target_seq:
         jid = q.submit(opt(args.sample_name, args.queue, jid),
@@ -73,6 +76,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Alignment job submitter')
     parser.add_argument('--queue', metavar='SGE queue', required=True)
     parser.add_argument('-t', '--target-seq', action='store_true', default=False)
+    parser.add_argument('--mapping-only', action='store_true', default=False,
+                        help='Stop after merge_bam (skip markdup, bqsr, post steps)')
     parser.add_argument('--sample-name', metavar='sample name', required=True)
     return parser.parse_args()
 
