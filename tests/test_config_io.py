@@ -1,36 +1,12 @@
 """Characterization tests for library/config.py I/O functions -- Layer 1 (pure logic).
 
-Tests run_info_append, write_run_options, log_dir, save_hold_jid -- the functions
+Tests write_run_options, log_dir, save_hold_jid -- the functions
 that do NOT call subprocess.
 """
 
 import os
 import pytest
-from library.config import run_info_append, write_run_options, log_dir, save_hold_jid
-
-
-class TestRunInfoAppend:
-    def test_appends_line(self, tmp_path):
-        f = tmp_path / "run_info"
-        f.write_text("EXISTING=value\n")
-        run_info_append(str(f), "NEW_KEY=new_value")
-        content = f.read_text()
-        assert "EXISTING=value\n" in content
-        assert "NEW_KEY=new_value\n" in content
-
-    def test_appends_multiple_lines(self, tmp_path):
-        f = tmp_path / "run_info"
-        f.write_text("")
-        run_info_append(str(f), "LINE1=a")
-        run_info_append(str(f), "LINE2=b")
-        lines = f.read_text().strip().split("\n")
-        assert lines == ["LINE1=a", "LINE2=b"]
-
-    def test_appends_with_newline(self, tmp_path):
-        f = tmp_path / "run_info"
-        f.write_text("")
-        run_info_append(str(f), "KEY=val")
-        assert f.read_text().endswith("\n")
+from library.config import write_run_options, log_dir, save_hold_jid
 
 
 class TestWriteRunOptions:

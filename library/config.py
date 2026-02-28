@@ -41,10 +41,6 @@ def run_info(fname, reference, conda_env = "bp"):
                 run_file.write("{key}={val}\n".format(
                     key=key.upper(), val=config[section][key]))
 
-def run_info_append(fname, line):
-    with open(fname, "a") as run_file:
-        run_file.write(line + "\n")
-
 def write_run_options(fname, options):
     """Write #RUN_OPTIONS section to run_info file."""
     with open(fname, "a") as f:

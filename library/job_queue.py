@@ -23,7 +23,7 @@ def sbatch_opt_array(sample, Q, jid=None):
     return opt
 
 
-class GridEngineQueue:
+class SlurmQueue:
 
     def __init__(self):
         self.run_jid = None
@@ -64,7 +64,7 @@ class GridEngineQueue:
         return jid
 
 
-SlurmQueue = GridEngineQueue
+GridEngineQueue = SlurmQueue
 
 
 class LocalQueue:
@@ -138,12 +138,17 @@ class LocalQueue:
         return list(range(int(m.group(1)), int(m.group(2)) + 1)) if m else []
 
 
-def create_queue(backend="auto", max_cpus=None):
-    """Factory: select execution backend."""
+def create_queue(backend=None, max_cpus=None):
+    """Factory: select execution backend.
+
+    backend: "local", "slurm", "auto", or None (reads PIPELINE_BACKEND env var).
+    """
+    if backend is None:
+        backend = os.environ.get("PIPELINE_BACKEND", "auto")
     if backend == "local":
         return LocalQueue(max_cpus=max_cpus)
     if backend == "slurm":
-        return GridEngineQueue()
+        return SlurmQueue()
     if shutil.which("sbatch"):
-        return GridEngineQueue()
+        return SlurmQueue()
     return LocalQueue(max_cpus=max_cpus)

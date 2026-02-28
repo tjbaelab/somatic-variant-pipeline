@@ -11,8 +11,8 @@ job_home = pipe_home + "/jobs/variant_filtering"
 sys.path.append(pipe_home)
 
 from library.config import save_hold_jid
-from library.job_queue import GridEngineQueue, sbatch_opt as opt
-q = GridEngineQueue()
+from library.job_queue import sbatch_opt as opt, create_queue
+q = create_queue()
 
 def main():
     args = parse_args()

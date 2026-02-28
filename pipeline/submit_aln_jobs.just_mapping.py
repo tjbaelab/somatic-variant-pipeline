@@ -12,11 +12,11 @@ job_home = pipe_home + "/jobs/genome_mapping"
 sys.path.append(pipe_home)
 
 from library.config import save_hold_jid
-from library.job_queue import GridEngineQueue, sbatch_opt as opt
+from library.job_queue import sbatch_opt as opt, create_queue
 
 def main():
     args = parse_args()
-    q = GridEngineQueue()
+    q = create_queue()
     q.set_run_jid(args.sample_name + "/run_jid")
 
     jid_list = []

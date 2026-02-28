@@ -12,13 +12,17 @@ job_home = pipe_home + "/jobs/genome_mapping"
 sys.path.append(pipe_home)
 
 from library.config import run_info, write_run_options
-from library.job_queue import sbatch_opt as opt
+from library.job_queue import sbatch_opt as opt, create_queue
 from library.parser import sample_list
-from library.job_queue import GridEngineQueue
-q = GridEngineQueue()
+
+q = None
 
 def main():
+    global q
     args = parse_args()
+
+    os.environ["PIPELINE_BACKEND"] = args.backend
+    q = create_queue()
 
     global down_jid_queue
     down_jid_queue = deque([None] * args.con_down_limit)
@@ -142,6 +146,8 @@ def parse_args():
         help='''Alignment format [cram (default) or bam]''', default="cram")
     parser.add_argument('-r', '--reference', metavar='ref',
         help='''Reference version [b37 (default) or hg19 or hg38]''', default="b37")
+    parser.add_argument('--backend', choices=['auto', 'local', 'slurm'],
+        default='auto', help='Execution backend [default: auto]')
     parser.add_argument('--sample-list', metavar='sample_list.txt', required=True,
         help='''Sample list file.
         Each line format is "sample_id\\tfile_name\\tlocation".

@@ -117,7 +117,7 @@ class TestMain:
     def setup(self, tmp_path, monkeypatch, mock_conda):
         self.mock_q = MockQueue()
         self.tmp = tmp_path
-        monkeypatch.setattr(mod, "q", self.mock_q)
+        monkeypatch.setattr(mod, "create_queue", lambda: self.mock_q)
         monkeypatch.chdir(tmp_path)
 
     def _sample_list(self, content):

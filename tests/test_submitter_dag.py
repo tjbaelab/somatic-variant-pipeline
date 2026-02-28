@@ -73,7 +73,7 @@ class TestAlignmentDAG:
                             lambda sample: str(tmp_path / sample / "logs"))
         monkeypatch.setattr(self.mod, "save_hold_jid",
                             lambda fname, jid: None)
-        monkeypatch.setattr(self.mod, "GridEngineQueue",
+        monkeypatch.setattr(self.mod, "create_queue",
                             lambda: self.mock_q)
         monkeypatch.chdir(tmp_path)
 

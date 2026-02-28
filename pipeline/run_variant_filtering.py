@@ -3,7 +3,6 @@
 import argparse
 import os
 import sys
-from collections import defaultdict, deque
 
 cmd_home = os.path.dirname(os.path.realpath(__file__))
 pipe_home = os.path.normpath(cmd_home + "/..")
@@ -12,11 +11,16 @@ sys.path.append(pipe_home)
 
 from library.config import run_info, write_run_options
 from library.parser import sample_list
-from library.job_queue import GridEngineQueue, sbatch_opt as opt
-q = GridEngineQueue()
+from library.job_queue import sbatch_opt as opt, create_queue
+
+q = None
 
 def main():
+    global q
     args = parse_args()
+
+    os.environ["PIPELINE_BACKEND"] = args.backend
+    q = create_queue()
 
     samples = sample_list(args.sample_list)
     for (sample, filetype), sdata in samples.items():
@@ -83,6 +87,8 @@ def parse_args():
             <sample name>.ploidy_<ploidy>.vcf.gz
             <sample name>.ploidy_<ploidy>.vcf.gz.tbi
         [Default: None]''', default=None)
+    parser.add_argument('--backend', choices=['auto', 'local', 'slurm'],
+        default='auto', help='Execution backend [default: auto]')
     parser.add_argument('--sample-list', metavar='sample_list.txt', required=True,
         help='''Sample list file.
         Each line format is "sample_id\\tfile_name\\tlocation".
