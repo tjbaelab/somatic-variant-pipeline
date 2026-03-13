@@ -19,9 +19,8 @@ def main():
     q.set_run_jid(args.sample_name + "/run_jid")
 
     jid_cnvnator = q.submit(opt(args.sample_name, args.queue),
-                            "{job_home}/A.CNVnator_mk_root{malign}.sh {sample} 100".format(
+                            "{job_home}/A.CNVnator_mk_root.sh {sample} 100".format(
                             job_home = job_home,
-                            malign = ".malign" if args.multiple_alignments else "",
                             sample = args.sample_name))
 
     for ploidy in args.ploidy:
@@ -41,13 +40,13 @@ def submit_jobs(sample, Q, ploidy, malign, jid_cnvnator):
     jid = q.submit(opt(sample, Q, jid),
         "{job_home}/B.PASS_P.sh {sample} {ploidy}".format(job_home=job_home, sample=sample, ploidy=ploidy))
     jid = q.submit(opt(sample, Q, jid),
-        "{job_home}/C.VAF_filters{malign}.sh {sample} {ploidy}".format(
-            job_home=job_home, malign = ".malign" if malign else "", sample=sample, ploidy=ploidy))
+        "{job_home}/C.VAF_filters.sh {sample} {ploidy}".format(
+            job_home=job_home, sample=sample, ploidy=ploidy))
     jid_cnv = q.submit(opt(sample, Q, ",".join([jid_cnvnator, jid])),
         "{job_home}/D.CNVnator_genotype_filter.sh {sample} {ploidy} 100".format(job_home=job_home, sample=sample, ploidy=ploidy))
     jid = q.submit(opt(sample, Q, jid_cnv),
-        "{job_home}/E.mayo_filters{malign}.sh {sample} {ploidy}".format(
-            job_home=job_home, malign = ".malign" if malign else "", sample=sample, ploidy=ploidy))
+        "{job_home}/E.mayo_filters.sh {sample} {ploidy}".format(
+            job_home=job_home, sample=sample, ploidy=ploidy))
     jid_mayo_pon = q.submit(opt(sample, Q, jid),
         "{job_home}/F.PON_mask.sh {sample} {ploidy} mayo".format(job_home=job_home, sample=sample, ploidy=ploidy))
     jid = q.submit(opt(sample, Q, jid_cnv),

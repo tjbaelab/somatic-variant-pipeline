@@ -35,10 +35,12 @@ else
     IN=$SM/candidates/$SM.ploidy_$PL.cnv.txt
 fi
 VAF=$SM/vaf/$SM.ploidy_$PL.gnomAD_AFover0.001_filtered.snvs.PASS.P.vaf
-if [[ $FILETYPE == "fastq" ]]; then
+if [[ $MULTI_ALIGNS == "True" ]]; then
+    BAM=$(awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST | xargs)
+elif [[ $FILETYPE == "fastq" ]]; then
     BAM=$SM/alignment/$SM.$ALIGNFMT
 else
-    BAM=`awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST |head -1`
+    BAM=$(awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST | head -1)
 fi
 
 STR=$SM/strand/${IN##*/}.str
@@ -60,7 +62,7 @@ DONE1=$SM/run_status/Mayo_filters.strand.ploidy_$PL.done
 if [[ -f $DONE1 ]]; then
     echo "Skip calculating strand bias. Already done."
 else
-    cut -f1-4 $IN | $PYTHON3 $PIPE_HOME/utils/strand_bias.py -q 20 -Q 20 -b $BAM -r $REFVER -c $CONDA_ENV -n $((NSLOTS-2)) > $STR
+    cut -f1-4 $IN | $PYTHON3 $PIPE_HOME/utils/strand_bias.py -q 20 -Q 20 -b "$BAM" -r $REFVER -c $CONDA_ENV -n $((NSLOTS-2)) > $STR
     mkdir -p $SM/run_status
     touch $DONE1
 fi

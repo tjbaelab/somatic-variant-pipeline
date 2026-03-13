@@ -29,10 +29,12 @@ source $(pwd)/$SM/run_info
 
 IN=$SM/gatk-hc/$SM.ploidy_$PL.gnomAD_AFover0.001_filtered.snvs.PASS.P.txt
 VAF=$SM/vaf/$SM.ploidy_$PL.gnomAD_AFover0.001_filtered.snvs.PASS.P.vaf
-if [[ $FILETYPE == "fastq" ]]; then
+if [[ $MULTI_ALIGNS == "True" ]]; then
+    BAM=$(awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST | xargs)
+elif [[ $FILETYPE == "fastq" ]]; then
     BAM=$SM/alignment/$SM.$ALIGNFMT
 else
-    BAM=`awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST |head -1`
+    BAM=$(awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST | head -1)
 fi
 
 SECONDS=0
@@ -55,7 +57,7 @@ else
     else
         export XDG_CACHE_HOME=$PIPE_HOME/resources/b37.cache
     fi
-    $PYTHON3 $PIPE_HOME/utils/somatic_vaf.py -q 20 -Q 20 -b $BAM -r $REFVER -c $CONDA_ENV -n $((NSLOTS-2)) $IN > $VAF
+    $PYTHON3 $PIPE_HOME/utils/somatic_vaf.py -q 20 -Q 20 -b "$BAM" -r $REFVER -c $CONDA_ENV -n $((NSLOTS-2)) $IN > $VAF
 
     mkdir -p $SM/run_status
     touch $DONE

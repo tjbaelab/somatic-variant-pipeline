@@ -361,9 +361,9 @@ class TestFilteringDAG:
         self.mod.main()
 
         scripts = script_names(self.mock_q.calls)
-        assert scripts[0] == "A.CNVnator_mk_root.malign.sh"
-        assert scripts[3] == "C.VAF_filters.malign.sh"
-        assert scripts[5] == "E.mayo_filters.malign.sh"
+        assert scripts[0] == "A.CNVnator_mk_root.sh"
+        assert scripts[3] == "C.VAF_filters.sh"
+        assert scripts[5] == "E.mayo_filters.sh"
         assert scripts[7] == "E.MosaicForecast.malign.sh"
 
     def test_dag_structure_preserved_with_malign(self, monkeypatch):

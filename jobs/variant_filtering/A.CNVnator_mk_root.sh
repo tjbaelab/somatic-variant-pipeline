@@ -1,7 +1,13 @@
 #!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --mem=4G
+#SBATCH --time=04:00:00
+#SBATCH --signal=USR1@60
+
 #$ -cwd
 #$ -pe threaded 8
-#$ -j y 
+#$ -j y
 #$ -l h_vmem=4G
 #$ -V
 
@@ -24,10 +30,12 @@ if [[ $SKIP_CNVNATOR == "True" ]]; then
     exit 0
 fi
 
-if [[ $FILETYPE == "fastq" ]]; then
+if [[ $MULTI_ALIGNS == "True" ]]; then
+    BAM=$(awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST | xargs)
+elif [[ $FILETYPE == "fastq" ]]; then
     BAM=$SM/alignment/$SM.$ALIGNFMT
 else
-    BAM=`awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST |head -1`
+    BAM=$(awk -v sm="$SM" '$1 == sm {print sm"/alignment/"$2}' $SAMPLE_LIST | head -1)
 fi
 
 OUTDIR=$SM/cnvnator/$BINSIZE
